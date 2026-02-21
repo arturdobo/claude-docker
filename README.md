@@ -18,6 +18,7 @@ docker build --build-arg UID=$(id -u) -t claude-code .
 
 ```bash
 mkdir -p ~/.claude-docker/config
+echo "{}" > ~/.claude-docker/.claude.json
 ```
 
 ### 3. Run
