@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     ripgrep \
     && rm -rf /var/lib/apt/lists/*
+    
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
+    && . "$HOME/.nvm/nvm.sh" \
+    && nvm install 24
 
 RUN useradd -m -s /bin/bash -u $UID claude
 
