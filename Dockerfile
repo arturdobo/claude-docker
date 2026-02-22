@@ -25,5 +25,4 @@ USER claude
 
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
-ENTRYPOINT ["claude"]
-CMD ["--dangerously-skip-permissions"]
+ENTRYPOINT ["claude", "--dangerously-skip-permissions"]
