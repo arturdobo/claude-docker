@@ -11,7 +11,7 @@ Run Claude Code in an isolated Docker container.
 ### 1. Build the image
 
 ```bash
-docker build --build-arg UID=$(id -u) -t claude-code .
+docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t claude-code .
 ```
 
 ### 2. Initialize docker config
@@ -30,11 +30,14 @@ docker run -it --rm \
   -v ~/.claude-docker/config:/home/claude/.claude \
   -v ~/.claude-docker/.claude.json:/home/claude/.claude.json \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
+  -v ${TMPDIR%/}:${TMPDIR%/} \
   -e TERM=$TERM \
   claude-code
 ```
 
 The project is mounted at its real host path (`-v $(pwd):$(pwd) -w $(pwd)`), so paths in plugin configs and project settings match between host and container.
+
+The `$TMPDIR` mount allows Claude to read pasted screenshots, which macOS stores under that path (typically `/var/folders/.../T/`). The trailing slash is stripped with `${TMPDIR%/}` to ensure the bind mount works.
 
 On first run, use `/login` inside the container to authenticate with your subscription.
 
@@ -46,9 +49,10 @@ Add to your `~/.zshrc` or `~/.bashrc` for convenience:
 alias claude-docker='docker run -it --rm \
   -v $(pwd):$(pwd) \
   -w $(pwd) \
-  -v ~/.claude-docker/config:/home/claude/.claude \
+  -v ~/.claude-docker/.claude:/home/claude/.claude \
   -v ~/.claude-docker/.claude.json:/home/claude/.claude.json \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
+  -v ${TMPDIR%/}:${TMPDIR%/} \
   -e TERM=$TERM \
   claude-code'
 ```

@@ -15,13 +15,14 @@ RUN apt-get update && apt-get install -y \
     jq \
     python3 \
     python3-pip \
+    openssh-client \
     ripgrep \
     tree \
     unzip \
     wget \
     zip \
     && rm -rf /var/lib/apt/lists/*
-    
+
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
     && . "$HOME/.nvm/nvm.sh" \
     && nvm install 24 \
@@ -29,14 +30,15 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
     && ln -s "$(which npm)" /usr/local/bin/npm \
     && ln -s "$(which npx)" /usr/local/bin/npx
 
-RUN useradd -m -s /bin/bash -u $UID claude
+ARG GID
+RUN useradd -m -s /bin/bash -u $UID -g $GID claude
 
 ENV COLORTERM=truecolor
-ENV HOME=/home/claude
 ENV PATH="/home/claude/.local/bin:$PATH"
 
 USER claude
 
+RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
 ENTRYPOINT ["claude", "--dangerously-skip-permissions"]
