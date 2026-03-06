@@ -10,6 +10,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 
 # --- System packages ---
 RUN apt-get update && apt-get install -y \
+    awscli \
     build-essential \
     curl \
     gh \
@@ -50,8 +51,12 @@ ENV PATH="/home/claude/.local/bin:$PATH"
 
 USER claude
 
-RUN curl -fsSL https://claude.ai/install.sh | bash
 
 RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
+
+RUN mkdir -p /home/claude/.aws
+
+ARG CACHEBUST
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 ENTRYPOINT ["claude", "--dangerously-skip-permissions"]

@@ -11,8 +11,10 @@ Run Claude Code in an isolated Docker container.
 ### 1. Build the image
 
 ```bash
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t claude-code .
+./build.sh
 ```
+
+This always installs the latest Claude Code version. Re-run it anytime to update.
 
 ### 2. Initialize docker config
 
