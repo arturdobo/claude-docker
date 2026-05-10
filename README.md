@@ -31,6 +31,7 @@ docker run -it --rm \
   -w $(pwd) \
   -v ~/.claude-docker/config:/home/claude/.claude \
   -v ~/.claude-docker/.claude.json:/home/claude/.claude.json \
+  -v ~/.agents/skills:/home/claude/.claude/skills \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
   -v ${TMPDIR%/}:${TMPDIR%/} \
   -e TERM=$TERM \
@@ -38,6 +39,8 @@ docker run -it --rm \
 ```
 
 The project is mounted at its real host path (`-v $(pwd):$(pwd) -w $(pwd)`), so paths in plugin configs and project settings match between host and container.
+
+The `~/.agents/skills` mount exposes host skills to Claude Code, which reads user-level skills from `~/.claude/skills/<skill-name>/SKILL.md`. Drop a skill folder into `~/.agents/skills` on the host and it will be picked up inside the container. Omit this line if you don't keep skills there.
 
 The `$TMPDIR` mount allows Claude to read pasted screenshots, which macOS stores under that path (typically `/var/folders/.../T/`). The trailing slash is stripped with `${TMPDIR%/}` to ensure the bind mount works.
 
@@ -53,6 +56,7 @@ alias claude-docker='docker run -it --rm \
   -w $(pwd) \
   -v ~/.claude-docker/.claude:/home/claude/.claude \
   -v ~/.claude-docker/.claude.json:/home/claude/.claude.json \
+  -v ~/.agents/skills:/home/claude/.claude/skills \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
   -v ${TMPDIR%/}:${TMPDIR%/} \
   -e TERM=$TERM \

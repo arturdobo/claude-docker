@@ -30,9 +30,11 @@ RUN apt-get update && apt-get install -y \
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
     && . "$HOME/.nvm/nvm.sh" \
     && nvm install 24 \
+    && npm install -g pnpm \
     && ln -s "$(which node)" /usr/local/bin/node \
     && ln -s "$(which npm)" /usr/local/bin/npm \
-    && ln -s "$(which npx)" /usr/local/bin/npx
+    && ln -s "$(which npx)" /usr/local/bin/npx \
+    && ln -s "$(which pnpm)" /usr/local/bin/pnpm
 
 # --- Rust (via rustup) ---
 ENV RUSTUP_HOME=/usr/local/rustup \
