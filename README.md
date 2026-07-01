@@ -34,11 +34,14 @@ docker run -it --rm \
   -v ~/.agents/skills:/home/claude/.claude/skills \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
   -v ${TMPDIR%/}:${TMPDIR%/} \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -e TERM=$TERM \
   claude-code
 ```
 
 The project is mounted at its real host path (`-v $(pwd):$(pwd) -w $(pwd)`), so paths in plugin configs and project settings match between host and container.
+
+The `/var/run/docker.sock` mount lets Claude Code run Docker containers from inside the container by talking to your host's Docker daemon. Containers it starts are siblings on the host, not nested. The entrypoint adjusts the `claude` user's group membership at startup so it can access the mounted socket. Note that bind mounts for these sibling containers are resolved on the **host**, so mount real host paths (the project is already mounted at its real host path for this reason). Omit this line if you don't need Docker.
 
 The `~/.agents/skills` mount exposes host skills to Claude Code, which reads user-level skills from `~/.claude/skills/<skill-name>/SKILL.md`. Drop a skill folder into `~/.agents/skills` on the host and it will be picked up inside the container. Omit this line if you don't keep skills there.
 
@@ -59,6 +62,7 @@ alias claude-docker='docker run -it --rm \
   -v ~/.agents/skills:/home/claude/.claude/skills \
   -v ~/.gitconfig:/home/claude/.gitconfig:ro \
   -v ${TMPDIR%/}:${TMPDIR%/} \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -e TERM=$TERM \
   claude-code'
 ```
